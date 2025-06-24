@@ -9,6 +9,7 @@ import {
   deleteAll
 } from './generate-images.mjs';
 import { setInkColor, toggleDrawCanvas } from './utils/draw.mjs';
+import './utils/math-renderer.mjs'; // Load MathJax
 
 // DOM Element Cache
 const pageEl = document.querySelector('.page-a');
@@ -296,10 +297,38 @@ if (themeToggleButton) {
   themeToggleButton.addEventListener('click', () => toggleTheme(themeToggleButton));
 }
 
+import { renderLaTeXToSVG } from './utils/math-renderer.mjs'; // Import the rendering function
+
 // Initial UI and Preview Setup on Load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => { // Make async for await
   updateUIToReflectState();
   applySettingsToPreview();
   // Initialize ink color for drawing canvas as well
   setInkColor(settingsState.inkColor);
+
+  // Proof of Concept: Render a hardcoded LaTeX string and append to notes
+  // paperContentEl is cached at the top of the file
+  if (paperContentEl) {
+    const latexString = 'x^2 + y^2 = z^2';
+    const svgElement = await renderLaTeXToSVG(latexString);
+    if (svgElement) {
+      // For display math, it's often better to wrap it in a div
+      const wrapperDiv = document.createElement('div');
+      wrapperDiv.style.textAlign = 'center'; // Example styling
+      wrapperDiv.appendChild(svgElement);
+      paperContent.appendChild(wrapperDiv);
+
+      // Add some text before and after to test layout
+      const textBefore = document.createElement('p');
+      textBefore.textContent = "Here is some math: ";
+      paperContent.insertBefore(textBefore, wrapperDiv);
+
+      const textAfter = document.createElement('p');
+      textAfter.textContent = "And that was the math.";
+      paperContent.appendChild(textAfter);
+
+    } else {
+      console.error('POC: Failed to render LaTeX string.');
+    }
+  }
 });
