@@ -1,3 +1,4 @@
+import html2canvas from 'html2canvas';
 import {
   applyPaperStyles,
   removePaperStyles,
@@ -12,19 +13,18 @@ let outputImages = [];
  * To generate image, we add styles to DIV and converts that HTML Element into Image.
  * This is the function that deals with it.
  */
-async function convertDIVToImage() {
+async function convertDIVToImage(currentSettings) {
   const options = {
     scrollX: 0,
     scrollY: -window.scrollY,
-    scale: document.querySelector('#resolution').value,
+    scale: currentSettings.resolution, // Use from settingsState
     useCORS: true
   };
 
-  /** Function html2canvas comes from a library html2canvas which is included in the index.html */
   const canvas = await html2canvas(pageEl, options);
 
   /** Send image data for modification if effect is scanner */
-  if (document.querySelector('#page-effects').value === 'scanner') {
+  if (currentSettings.pageEffects === 'scanner') { // Use from settingsState
     const context = canvas.getContext('2d');
     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
     contrastImage(imageData, 0.55);
@@ -41,9 +41,10 @@ async function convertDIVToImage() {
 
 /**
  * This is the function that gets called on clicking "Generate Image" button.
+ * It now accepts currentSettings from app.mjs.
  */
-export async function generateImages() {
-  applyPaperStyles();
+export async function generateImages(currentSettings) {
+  applyPaperStyles(currentSettings.pageEffects); // Pass pageEffects
   pageEl.scroll(0, 0);
 
   const paperContentEl = document.querySelector('.page-a .paper-content');
@@ -81,15 +82,15 @@ export async function generateImages() {
       paperContentEl.innerHTML = wordString;
       wordCount--;
       pageEl.scrollTo(0, 0);
-      await convertDIVToImage();
+      await convertDIVToImage(currentSettings); // Pass currentSettings
       paperContentEl.innerHTML = initialPaperContent;
     }
   } else {
     // single image
-    await convertDIVToImage();
+    await convertDIVToImage(currentSettings); // Pass currentSettings
   }
 
-  removePaperStyles();
+  removePaperStyles(currentSettings.pageEffects); // Pass pageEffects
   renderOutput(outputImages);
   setRemoveImageListeners();
 }

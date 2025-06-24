@@ -12,7 +12,8 @@
     "prettier": "prettier --write \"./index.html\" \"js/**/**.mjs\" \"css/**.css\"",
     "format": "npm run prettier",
     "cy": "cypress open",
-    "dev": "serve ."
+    "dev": "vite",
+    "build": "vite build"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,10 @@
     "url": "https://github.com/Testinfd/Testing/issues"
   },
   "homepage": "https://github.com/Testinfd/Testing#readme",
+  "dependencies": {
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1"
+  },
   "devDependencies": {
     "cypress": "^4.4.1",
     "eslint": "^7.0.0",
@@ -33,7 +38,7 @@
     "eslint-plugin-prettier": "^3.1.3",
     "husky": "^4.2.5",
     "prettier": "^2.0.5",
-    "serve": "^11.3.2"
+    "vite": "^5.0.10"
   },
   "husky": {
     "hooks": {

@@ -15,29 +15,31 @@ function isFontErrory() {
   );
 }
 
-function applyPaperStyles() {
+function applyPaperStyles(pageEffectValue) { // Accept pageEffectValue
   pageEl.style.border = 'none';
   pageEl.style.overflowY = 'hidden';
 
   // Adding class shadows even if effect is scanner
-  if (document.querySelector('#page-effects').value === 'scanner') {
+  if (pageEffectValue === 'scanner') {
     overlayEl.classList.add('shadows');
   } else {
-    overlayEl.classList.add(document.querySelector('#page-effects').value);
+    overlayEl.classList.add(pageEffectValue);
   }
 
-  if (document.querySelector('#page-effects').value === 'scanner') {
+  if (pageEffectValue === 'scanner') {
     // For scanner, we need shadow between 50deg to 120deg only
     // Since If the lit part happens to be on margins, the margins get invisible
     overlayEl.style.background = `linear-gradient(${
       Math.floor(Math.random() * (120 - 50 + 1)) + 50
     }deg, #0008, #0000)`;
-  } else if (document.querySelector('#page-effects').value === 'shadows') {
+  } else if (pageEffectValue === 'shadows') {
     overlayEl.style.background = `linear-gradient(${
       Math.random() * 360
     }deg, #0008, #0000)`;
   }
 
+  // Note: document.querySelector('#font-file') is still used here.
+  // This could be passed via settingsState if it becomes problematic.
   if (isFontErrory() && document.querySelector('#font-file').files.length < 1) {
     paperContentPadding =
       paperContentEl.style.paddingTop.replace(/px/g, '') || 5;
@@ -46,14 +48,14 @@ function applyPaperStyles() {
   }
 }
 
-function removePaperStyles() {
+function removePaperStyles(pageEffectValue) { // Accept pageEffectValue
   pageEl.style.overflowY = 'auto';
   pageEl.style.border = '1px solid var(--elevation-background)';
 
-  if (document.querySelector('#page-effects').value === 'scanner') {
+  if (pageEffectValue === 'scanner') {
     overlayEl.classList.remove('shadows');
   } else {
-    overlayEl.classList.remove(document.querySelector('#page-effects').value);
+    overlayEl.classList.remove(pageEffectValue);
   }
 
   if (isFontErrory()) {
