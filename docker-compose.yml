@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" # Map host port 3000 to container port 80 (Nginx default)
+    restart: unless-stopped
+    depends_on:
+      - backend # Optional: ensure backend starts before frontend, though frontend is client-side rendered
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001" # Map host port 3001 to container port 3001 (Express server)
+    restart: unless-stopped
+    environment:
+      # Define any environment variables your backend needs
+      # Example:
+      # NODE_ENV: development
+      PORT: 3001
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
